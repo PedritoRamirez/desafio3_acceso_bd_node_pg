@@ -9,10 +9,10 @@ const pool = new Pool({
 });
 
 //Agregar Registros
-const agregarRegistro = async (titulo, url, descripcion, likes) => {
+const agregarRegistro = async (titulo, url, descripcion, like) => {
   const consulta =
-    "INSERT INTO posts values (DEFAULT,$1, $2, $3, 0) RETURNING *";
-  const values = [titulo, url, descripcion];
+    "INSERT INTO posts values (DEFAULT,$1, $2, $3, $4) RETURNING *";
+  const values = [titulo, url, descripcion, 0];
   await pool.query(consulta, values);
   console.log("Informacion de Registro agregada");
 };
@@ -24,4 +24,18 @@ const obtenerRegistros = async () => {
   return rows;
 };
 
-module.exports = { agregarRegistro, obtenerRegistros };
+//Modificar Registros
+const modificarRegistros = async (id) => {
+  const consulta = "UPDATE posts SET likes = (likes + 1) WHERE id = $1;";
+  const values = [id];
+  await pool.query(consulta, values);
+};
+
+//Eliminar Registros
+const eliminarRegistros = async (id) => {
+  const consulta = "DELETE FROM posts WHERE id = $1"
+  const values = [id]
+  await pool.query(consulta, values) 
+}
+
+module.exports = { agregarRegistro, obtenerRegistros, modificarRegistros, eliminarRegistros };
